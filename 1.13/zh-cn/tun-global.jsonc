@@ -27,6 +27,10 @@
         ],
         "rules": [
             {
+                "outbound": "any",
+                "server": "local"
+            },
+            {
                 "query_type": [
                     "A",
                     "AAAA"
@@ -106,8 +110,8 @@
             }
         ],
         "final": "ExitGateway",
-        "auto_detect_interface": true,
-        "rule_set": []
+        "default_domain_resolver": "local",
+        "auto_detect_interface": true
     },
     "experimental": {
         "clash_api": {},

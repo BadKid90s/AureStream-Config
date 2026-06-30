@@ -1,191 +1,202 @@
 {
-    "log": {
-        "disabled": false,
-        "level": "info",
-        "timestamp": true
-    },
-    "dns": {
-        "servers": [
-            {
-                "tag": "remote",
-                "type": "tls",
-                "server": "8.8.8.8",
-                "detour": "ExitGateway"
-            },
-            {
-                "tag": "local",
-                "type": "udp",
-                "server": "223.5.5.5",
-                "detour": "direct"
-            },
-            {
-                "tag": "fakeip",
-                "type": "fakeip",
-                "inet4_range": "198.18.0.0/15",
-                "inet6_range": "2001:0470:f9da:fdfa::1/64"
-            }
-        ],
-        "rules": [
-            {
-                "rule_set": [
-                    "geosite-cn",
-                    "geosite-microsoft-cn"
-                ],
-                "server": "local"
-            },
-            {
-                "query_type": [
-                    "A",
-                    "AAAA"
-                ],
-                "rewrite_ttl": 1,
-                "server": "fakeip"
-            }
-        ],
-        "strategy": "prefer_ipv4",
-        "independent_cache": true
-    },
-    "inbounds": [
-        {
-            "tag": "tun",
-            "type": "tun",
-            "address": [
-                "172.19.0.1/30",
-                "fdfe:dcba:9876::1/126"
-            ],
-            "mtu": 1500,
-            "stack": "gvisor",
-            "auto_route": true,
-            "strict_route": true,
-            "endpoint_independent_nat": true,
-            "route_exclude_address": [
-                "10.0.0.0/8",
-                "127.0.0.0/8",
-                "169.254.0.0/16",
-                "172.16.0.0/12",
-                "192.0.0.0/24",
-                "192.168.0.0/16",
-                "224.0.0.0/4",
-                "240.0.0.0/4",
-                "255.255.255.255/32",
-                "fe80::/10",
-                "fd00::/8",
-                "ff01::/16",
-                "ff02::/16",
-                "ff03::/16",
-                "ff04::/16",
-                "ff05::/16"
-            ]
-        },
-        {
-            "tag": "mixed",
-            "type": "mixed",
-            "listen": "127.0.0.1",
-            "listen_port": 6789,
-            "set_system_proxy": false
-        }
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "remote",
+        "type": "tls",
+        "server": "8.8.8.8",
+        "detour": "ExitGateway"
+      },
+      {
+        "tag": "local",
+        "type": "udp",
+        "server": "223.5.5.5",
+        "detour": "direct"
+      },
+      {
+        "tag": "fakeip",
+        "type": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "2001:0470:f9da:fdfa::1/64"
+      }
     ],
-    "route": {
-        "rules": [
-            {
-                "protocol": "dns",
-                "action": "hijack-dns"
-            },
-            {
-                "port": 53,
-                "action": "hijack-dns"
-            },
-            {
-                "network": "udp",
-                "port": 443,
-                "action": "reject"
-            },
-            {
-                "domain": [
-                    "reject-tag.oneoh.cloud"
-                ],
-                "action": "reject"
-            },
-            {
-                "domain": [
-                    "direct-tag.oneoh.cloud"
-                ],
-                "outbound": "direct"
-            },
-            {
-                "domain": [
-                    "proxy-tag.oneoh.cloud"
-                ],
-                "outbound": "ExitGateway"
-            },
-            {
-                "rule_set": [
-                    "geosite-cn",
-                    "geosite-microsoft-cn"
-                ],
-                "outbound": "direct"
-            },
-            {
-                "ip_cidr": [
-                    "198.18.0.0/15",
-                    "2001:0470:f9da:fdfa::1/64"
-                ],
-                "outbound": "ExitGateway"
-            },
-            {
-                "ip_is_private": true,
-                "outbound": "direct"
-            },
-            {
-                "rule_set": "geoip-cn",
-                "outbound": "direct"
-            }
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "local"
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
         ],
-        "final": "ExitGateway",
-        "auto_detect_interface": true,
+        "rewrite_ttl": 1,
+        "server": "fakeip"
+      }
+    ],
+    "strategy": "prefer_ipv4",
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "tag": "tun",
+      "type": "tun",
+      "address": [
+        "172.19.0.1/30",
+        "fdfe:dcba:9876::1/126"
+      ],
+      "mtu": 1500,
+      "stack": "gvisor",
+      "auto_route": true,
+      "strict_route": true,
+      "endpoint_independent_nat": true,
+      "route_exclude_address": [
+        "10.0.0.0/8",
+        "127.0.0.0/8",
+        "169.254.0.0/16",
+        "172.16.0.0/12",
+        "192.0.0.0/24",
+        "192.168.0.0/16",
+        "224.0.0.0/4",
+        "240.0.0.0/4",
+        "255.255.255.255/32",
+        "fe80::/10",
+        "fd00::/8",
+        "ff01::/16",
+        "ff02::/16",
+        "ff03::/16",
+        "ff04::/16",
+        "ff05::/16"
+      ]
+    },
+    {
+      "tag": "mixed",
+      "type": "mixed",
+      "listen": "127.0.0.1",
+      "listen_port": 6789,
+      "set_system_proxy": false
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "protocol": "dns",
+        "action": "hijack-dns"
+      },
+      {
+        "clash_mode": "direct",
+        "outbound": "direct"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "ExitGateway"
+      },
+      {
+        "rule_set": "AdGuardSDNSFilter",
+        "action": "reject"
+      },
+      {
         "rule_set": [
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs"
-            },
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs"
-            },
-            {
-                "tag": "geosite-microsoft-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-microsoft@cn.srs"
-            }
-        ]
-    },
-    "experimental": {
-        "clash_api": {},
-        "cache_file": {}
-    },
-    "outbounds": [
-        {
-            "tag": "direct",
-            "type": "direct"
-        },
-        {
-            "tag": "ExitGateway",
-            "type": "selector",
-            "outbounds": [
-                "auto"
-            ],
-            "interrupt_exist_connections": true
-        },
-        {
-            "tag": "auto",
-            "type": "urltest",
-            "url": "https://www.gstatic.com/generate_204",
-            "outbounds": []
-        }
+          "ai",
+          "google"
+        ],
+        "outbound": "ExitGateway"
+      },
+      {
+        "rule_set": [
+          "ext-cn-domain",
+          "geosite-cn"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "ip_cidr": [
+          "198.18.0.0/15",
+          "2001:0470:f9da:fdfa::1/64"
+        ],
+        "outbound": "ExitGateway"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "geoip-cn",
+        "outbound": "direct"
+      }
+    ],
+    "final": "ExitGateway",
+    "auto_detect_interface": true,
+    "default_domain_resolver": "local",
+    "rule_set": [
+      {
+        "tag": "geoip-cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs"
+      },
+      {
+        "tag": "geosite-cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs"
+      },
+      {
+        "tag": "AdGuardSDNSFilter",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/xmdhs/sing-box-ruleset/rule-set/AdGuardSDNSFilterSingBox.srs"
+      },
+      {
+        "tag": "ext-cn-domain",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/xmdhs/cn-domain-list/rule-set/ext-cn-list.srs"
+      },
+      {
+        "tag": "ai",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ai-!cn.srs"
+      },
+      {
+        "tag": "google",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs"
+      }
     ]
+  },
+  "experimental": {
+    "clash_api": {},
+    "cache_file": {}
+  },
+  "outbounds": [
+    {
+      "tag": "direct",
+      "type": "direct"
+    },
+    {
+      "tag": "ExitGateway",
+      "type": "selector",
+      "outbounds": [
+        "auto"
+      ],
+      "interrupt_exist_connections": true
+    },
+    {
+      "tag": "auto",
+      "type": "urltest",
+      "url": "https://www.gstatic.com/generate_204",
+      "outbounds": []
+    }
+  ]
 }
