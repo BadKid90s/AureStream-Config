@@ -1,21 +1,22 @@
 {
     "log": {
         "disabled": false,
-        "level": "debug",
-        "timestamp": false
+        "level": "info",
+        "timestamp": true
     },
     "dns": {
         "servers": [
             {
                 "tag": "remote",
-                "type": "https",
+                "type": "tls",
                 "server": "8.8.8.8",
                 "detour": "ExitGateway"
             },
             {
                 "tag": "local",
                 "type": "udp",
-                "server": "223.5.5.5"
+                "server": "223.5.5.5",
+                "detour": "direct"
             },
             {
                 "tag": "fakeip",
@@ -26,11 +27,10 @@
         ],
         "rules": [
             {
-                "rule_set": "geosite-cn",
-                "server": "local"
-            },
-            {
-                "rule_set": "geosite-microsoft-cn",
+                "rule_set": [
+                    "geosite-cn",
+                    "geosite-microsoft-cn"
+                ],
                 "server": "local"
             },
             {
@@ -53,13 +53,6 @@
                 "172.19.0.1/30",
                 "fdfe:dcba:9876::1/126"
             ],
-            "platform": {
-                "http_proxy": {
-                    "enabled": false,
-                    "server": "127.0.0.1",
-                    "server_port": 6789
-                }
-            },
             "mtu": 1500,
             "stack": "gvisor",
             "auto_route": true,
@@ -99,8 +92,13 @@
                 "action": "hijack-dns"
             },
             {
-                "action": "resolve",
-                "strategy": "prefer_ipv4"
+                "port": 53,
+                "action": "hijack-dns"
+            },
+            {
+                "network": "udp",
+                "port": 443,
+                "action": "reject"
             },
             {
                 "domain": [
@@ -121,6 +119,20 @@
                 "outbound": "ExitGateway"
             },
             {
+                "rule_set": [
+                    "geosite-cn",
+                    "geosite-microsoft-cn"
+                ],
+                "outbound": "direct"
+            },
+            {
+                "ip_cidr": [
+                    "198.18.0.0/15",
+                    "2001:0470:f9da:fdfa::1/64"
+                ],
+                "outbound": "ExitGateway"
+            },
+            {
                 "ip_is_private": true,
                 "outbound": "direct"
             },
@@ -130,7 +142,6 @@
             }
         ],
         "final": "ExitGateway",
-        "default_domain_resolver": "local",
         "auto_detect_interface": true,
         "rule_set": [
             {
@@ -173,7 +184,7 @@
         {
             "tag": "auto",
             "type": "urltest",
-            "url": "https://www.google.com/generate_204",
+            "url": "https://www.gstatic.com/generate_204",
             "outbounds": []
         }
     ]
