@@ -7,21 +7,37 @@
     "dns": {
         "servers": [
             {
-                "tag": "remote",
-                "type": "https",
+                "tag": "dns_proxy",
+                "type": "tls",
                 "server": "8.8.8.8",
                 "detour": "ExitGateway"
             },
             {
-                "tag": "local",
-                "type": "udp",
-                "server": "223.5.5.5"
+                "tag": "fakeip",
+                "type": "fakeip",
+                "inet4_range": "198.18.0.0/15"
             }
         ],
-        "rules": [],
-        "final": "remote",
-        "strategy": "prefer_ipv4",
-        "independent_cache": true
+        "rules": [
+            {
+                "query_type": [
+                    "HTTPS",
+                    "SVCB",
+                    "PTR"
+                ],
+                "action": "reject"
+            },
+            {
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "server": "fakeip",
+                "rewrite_ttl": 1
+            }
+        ],
+        "final": "dns_proxy",
+        "strategy": "prefer_ipv4"
     },
     "inbounds": [
         {
@@ -39,18 +55,27 @@
                 "action": "hijack-dns"
             },
             {
-                "action": "resolve",
-                "strategy": "prefer_ipv4"
+                "ip_version": 6,
+                "action": "reject"
+            },
+            {
+                "protocol": "quic",
+                "action": "reject"
             },
             {
                 "ip_is_private": true,
                 "outbound": "direct"
+            },
+            {
+                "ip_cidr": [
+                    "198.18.0.0/15"
+                ],
+                "outbound": "ExitGateway"
             }
         ],
         "final": "ExitGateway",
-        "default_domain_resolver": "local",
         "auto_detect_interface": true,
-        "rule_set": []
+        "default_domain_resolver": "dns_proxy"
     },
     "experimental": {
         "clash_api": {},
@@ -59,13 +84,17 @@
     "outbounds": [
         {
             "tag": "direct",
-            "type": "direct"
+            "type": "direct",
+            "domain_resolver": "dns_proxy"
         },
         {
             "tag": "ExitGateway",
             "type": "selector",
             "outbounds": [
-                "auto"
+                "auto",
+                "AureStream优选1",
+                "AureStream优选2",
+                "AureStream优选3"
             ],
             "interrupt_exist_connections": true
         },
@@ -73,7 +102,79 @@
             "tag": "auto",
             "type": "urltest",
             "url": "https://www.google.com/generate_204",
-            "outbounds": []
+            "interval": "1m",
+            "tolerance": 50,
+            "outbounds": [
+                "AureStream优选1",
+                "AureStream优选2",
+                "AureStream优选3"
+            ]
+        },
+        {
+            "tag": "AureStream优选1",
+            "type": "vless",
+            "server": "162.159.38.178",
+            "server_port": 443,
+            "uuid": "095909af-8903-4305-8a7d-07fd0fb8c0e3",
+            "tls": {
+                "enabled": true,
+                "server_name": "tunnel.chilix.ccwu.cc",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/",
+                "headers": {
+                    "Host": "tunnel.chilix.ccwu.cc"
+                }
+            }
+        },
+        {
+            "tag": "AureStream优选2",
+            "type": "vless",
+            "server": "162.159.44.115",
+            "server_port": 443,
+            "uuid": "095909af-8903-4305-8a7d-07fd0fb8c0e3",
+            "tls": {
+                "enabled": true,
+                "server_name": "tunnel.chilix.ccwu.cc",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/",
+                "headers": {
+                    "Host": "tunnel.chilix.ccwu.cc"
+                }
+            }
+        },
+        {
+            "tag": "AureStream优选3",
+            "type": "vless",
+            "server": "162.159.45.97",
+            "server_port": 443,
+            "uuid": "095909af-8903-4305-8a7d-07fd0fb8c0e3",
+            "tls": {
+                "enabled": true,
+                "server_name": "tunnel.chilix.ccwu.cc",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/",
+                "headers": {
+                    "Host": "tunnel.chilix.ccwu.cc"
+                }
+            }
         }
     ]
 }

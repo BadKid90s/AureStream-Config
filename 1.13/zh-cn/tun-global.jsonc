@@ -7,48 +7,44 @@
     "dns": {
         "servers": [
             {
-                "tag": "remote",
+                "tag": "dns_proxy",
                 "type": "tls",
                 "server": "8.8.8.8",
                 "detour": "ExitGateway"
             },
             {
-                "tag": "local",
-                "type": "udp",
-                "server": "223.5.5.5",
-                "detour": "direct"
-            },
-            {
                 "tag": "fakeip",
                 "type": "fakeip",
-                "inet4_range": "198.18.0.0/15",
-                "inet6_range": "2001:0470:f9da:fdfa::1/64"
+                "inet4_range": "198.18.0.0/15"
             }
         ],
         "rules": [
             {
-                "outbound": "any",
-                "server": "local"
+                "query_type": [
+                    "HTTPS",
+                    "SVCB",
+                    "PTR"
+                ],
+                "action": "reject"
             },
             {
                 "query_type": [
                     "A",
                     "AAAA"
                 ],
-                "rewrite_ttl": 1,
-                "server": "fakeip"
+                "server": "fakeip",
+                "rewrite_ttl": 1
             }
         ],
-        "strategy": "prefer_ipv4",
-        "independent_cache": true
+        "final": "dns_proxy",
+        "strategy": "prefer_ipv4"
     },
     "inbounds": [
         {
             "tag": "tun",
             "type": "tun",
             "address": [
-                "172.19.0.1/30",
-                "fdfe:dcba:9876::1/126"
+                "172.19.0.1/30"
             ],
             "mtu": 1500,
             "stack": "gvisor",
@@ -89,29 +85,27 @@
                 "action": "hijack-dns"
             },
             {
-                "port": 53,
-                "action": "hijack-dns"
-            },
-            {
-                "network": "udp",
-                "port": 443,
+                "ip_version": 6,
                 "action": "reject"
             },
             {
-                "ip_cidr": [
-                    "198.18.0.0/15",
-                    "2001:0470:f9da:fdfa::1/64"
-                ],
-                "outbound": "ExitGateway"
+                "protocol": "quic",
+                "action": "reject"
             },
             {
                 "ip_is_private": true,
                 "outbound": "direct"
+            },
+            {
+                "ip_cidr": [
+                    "198.18.0.0/15"
+                ],
+                "outbound": "ExitGateway"
             }
         ],
         "final": "ExitGateway",
-        "default_domain_resolver": "local",
-        "auto_detect_interface": true
+        "auto_detect_interface": true,
+        "default_domain_resolver": "dns_proxy"
     },
     "experimental": {
         "clash_api": {},
@@ -120,13 +114,17 @@
     "outbounds": [
         {
             "tag": "direct",
-            "type": "direct"
+            "type": "direct",
+            "domain_resolver": "dns_proxy"
         },
         {
             "tag": "ExitGateway",
             "type": "selector",
             "outbounds": [
-                "auto"
+                "auto",
+                "AureStream优选1",
+                "AureStream优选2",
+                "AureStream优选3"
             ],
             "interrupt_exist_connections": true
         },
@@ -134,7 +132,79 @@
             "tag": "auto",
             "type": "urltest",
             "url": "https://www.gstatic.com/generate_204",
-            "outbounds": []
+            "interval": "1m",
+            "tolerance": 50,
+            "outbounds": [
+                "AureStream优选1",
+                "AureStream优选2",
+                "AureStream优选3"
+            ]
+        },
+        {
+            "tag": "AureStream优选1",
+            "type": "vless",
+            "server": "162.159.38.178",
+            "server_port": 443,
+            "uuid": "095909af-8903-4305-8a7d-07fd0fb8c0e3",
+            "tls": {
+                "enabled": true,
+                "server_name": "tunnel.chilix.ccwu.cc",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/",
+                "headers": {
+                    "Host": "tunnel.chilix.ccwu.cc"
+                }
+            }
+        },
+        {
+            "tag": "AureStream优选2",
+            "type": "vless",
+            "server": "162.159.44.115",
+            "server_port": 443,
+            "uuid": "095909af-8903-4305-8a7d-07fd0fb8c0e3",
+            "tls": {
+                "enabled": true,
+                "server_name": "tunnel.chilix.ccwu.cc",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/",
+                "headers": {
+                    "Host": "tunnel.chilix.ccwu.cc"
+                }
+            }
+        },
+        {
+            "tag": "AureStream优选3",
+            "type": "vless",
+            "server": "162.159.45.97",
+            "server_port": 443,
+            "uuid": "095909af-8903-4305-8a7d-07fd0fb8c0e3",
+            "tls": {
+                "enabled": true,
+                "server_name": "tunnel.chilix.ccwu.cc",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/",
+                "headers": {
+                    "Host": "tunnel.chilix.ccwu.cc"
+                }
+            }
         }
     ]
 }
