@@ -1,4 +1,9 @@
 {
+    "log": {
+        "disabled": false,
+        "level": "debug",
+        "timestamp": false
+    },
     "dns": {
         "servers": [
             {
