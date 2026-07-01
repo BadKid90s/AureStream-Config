@@ -139,7 +139,7 @@
         "tag": "geoip-cn",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+        "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs",
         "update_interval": "1d",
         "download_detour": "direct"
       },
@@ -147,7 +147,7 @@
         "tag": "geosite-cn",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs",
+        "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-geolocation-cn.srs",
         "update_interval": "1d",
         "download_detour": "direct"
       },
@@ -155,7 +155,7 @@
         "tag": "AdGuardSDNSFilter",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/xmdhs/sing-box-ruleset/rule-set/AdGuardSDNSFilterSingBox.srs",
+        "url": "https://cdn.jsdelivr.net/gh/xmdhs/sing-box-ruleset@rule-set/AdGuardSDNSFilterSingBox.srs",
         "update_interval": "1d",
         "download_detour": "direct"
       }
