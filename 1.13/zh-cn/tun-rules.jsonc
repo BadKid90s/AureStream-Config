@@ -126,18 +126,18 @@
         "outbound": "ExitGateway"
       },
       {
+        "ip_cidr": [
+          "198.18.0.0/15"
+        ],
+        "outbound": "ExitGateway"
+      },
+      {
         "ip_is_private": true,
         "outbound": "direct"
       },
       {
         "rule_set": "geoip-cn",
         "outbound": "direct"
-      },
-      {
-        "ip_cidr": [
-          "198.18.0.0/15"
-        ],
-        "outbound": "ExitGateway"
       }
     ],
     "final": "ExitGateway",
