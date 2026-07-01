@@ -59,10 +59,6 @@
                 "action": "reject"
             },
             {
-                "protocol": "quic",
-                "action": "reject"
-            },
-            {
                 "ip_cidr": [
                     "198.18.0.0/15"
                 ],

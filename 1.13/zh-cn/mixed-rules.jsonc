@@ -47,7 +47,6 @@
   ],
   "route": {
     "rules": [
-      { "protocol": "quic", "action": "reject" },
       {
         "type": "logical",
         "mode": "or",
