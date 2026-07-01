@@ -1,146 +1,128 @@
 {
-    "log": {
-        "disabled": false,
-        "level": "debug",
-        "timestamp": false
-    },
-    "dns": {
-        "servers": [
-            {
-                "tag": "system",
-                "type": "udp",
-                "server": "223.5.5.5"
-            },
-            {
-                "tag": "dns_proxy",
-                "type": "tls",
-                "server": "8.8.8.8",
-                "detour": "ExitGateway"
-            },
-            {
-                "tag": "fakeip",
-                "type": "fakeip",
-                "inet4_range": "198.18.0.0/15"
-            }
-        ],
-        "rules": [
-            {
-                "query_type": [
-                    "HTTPS",
-                    "SVCB",
-                    "PTR"
-                ],
-                "action": "reject"
-            },
-            {
-                "rule_set": [
-                    "geosite-cn",
-                    "geosite-microsoft-cn"
-                ],
-                "server": "system",
-                "strategy": "prefer_ipv4"
-            },
-            {
-                "query_type": [
-                    "A",
-                    "AAAA"
-                ],
-                "server": "fakeip",
-                "rewrite_ttl": 1
-            }
-        ],
-        "final": "dns_proxy",
-        "strategy": "prefer_ipv4"
-    },
-    "inbounds": [
-        {
-            "tag": "mixed",
-            "type": "mixed",
-            "listen": "127.0.0.1",
-            "listen_port": 6789,
-            "set_system_proxy": false
-        }
+  "log": {
+    "level": "debug"
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "udp",
+        "tag": "system",
+        "server": "223.5.5.5"
+      },
+      {
+        "type": "tls",
+        "tag": "dns_proxy",
+        "detour": "ExitGateway",
+        "server": "8.8.8.8"
+      }
     ],
-    "route": {
-        "rules": [
-            {
-                "protocol": "dns",
-                "action": "hijack-dns"
-            },
-            {
-                "ip_version": 6,
-                "action": "reject"
-            },
-            {
-                "protocol": "quic",
-                "action": "reject"
-            },
-            {
-                "domain": [
-                    "reject-tag.oneoh.cloud"
-                ],
-                "action": "reject"
-            },
-            {
-                "domain": [
-                    "direct-tag.oneoh.cloud"
-                ],
-                "outbound": "direct"
-            },
-            {
-                "domain": [
-                    "proxy-tag.oneoh.cloud"
-                ],
-                "outbound": "ExitGateway"
-            },
-            {
-                "ip_is_private": true,
-                "outbound": "direct"
-            },
-            {
-                "rule_set": "geoip-cn",
-                "outbound": "direct"
-            },
-            {
-                "ip_cidr": [
-                    "198.18.0.0/15"
-                ],
-                "outbound": "ExitGateway"
-            }
+    "rules": [
+      {
+        "query_type": [
+          "HTTPS",
+          "SVCB",
+          "PTR"
         ],
-        "final": "ExitGateway",
-        "auto_detect_interface": true,
-        "default_domain_resolver": "system",
+        "action": "reject"
+      },
+      {
         "rule_set": [
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs",
-                "update_interval": "1d",
-                "download_detour": "direct"
-            },
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-geolocation-cn.srs",
-                "update_interval": "1d",
-                "download_detour": "direct"
-            },
-            {
-                "tag": "geosite-microsoft-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-microsoft@cn.srs",
-                "update_interval": "1d",
-                "download_detour": "direct"
-            }
-        ]
-    },
-    "experimental": {
-        "clash_api": {},
-        "cache_file": {}
-    },
-    "outbounds": []
+          "geosite-cn",
+          "geosite-microsoft-cn"
+        ],
+        "server": "system",
+        "strategy": "ipv4_only"
+      }
+    ],
+    "final": "dns_proxy",
+    "strategy": "ipv4_only"
+  },
+  "inbounds": [
+    {
+      "type": "mixed",
+      "tag": "mixed",
+      "listen": "127.0.0.1",
+      "listen_port": 6789
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "ip_version": 6,
+        "action": "reject"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "port": 853
+          },
+          {
+            "protocol": "stun"
+          }
+        ],
+        "action": "reject"
+      },
+      {
+        "domain": "reject-tag.oneoh.cloud",
+        "action": "reject"
+      },
+      {
+        "domain": "direct-tag.oneoh.cloud",
+        "outbound": "direct"
+      },
+      {
+        "domain": "proxy-tag.oneoh.cloud",
+        "outbound": "ExitGateway"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "geosite-cn",
+          "geosite-microsoft-cn"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "geoip-cn",
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geoip-cn",
+        "url": "https://testingcf.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs",
+        "download_detour": "direct",
+        "update_interval": "24h0m0s"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-cn",
+        "url": "https://testingcf.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-geolocation-cn.srs",
+        "download_detour": "direct",
+        "update_interval": "24h0m0s"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-microsoft-cn",
+        "url": "https://testingcf.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-microsoft@cn.srs",
+        "download_detour": "direct",
+        "update_interval": "24h0m0s"
+      }
+    ],
+    "final": "ExitGateway",
+    "auto_detect_interface": true,
+    "default_domain_resolver": "system"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "cache.db"
+    }
+  }
 }
