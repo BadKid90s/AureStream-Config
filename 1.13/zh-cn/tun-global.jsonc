@@ -15,8 +15,7 @@
             {
                 "tag": "fakeip",
                 "type": "fakeip",
-                "inet4_range": "198.18.0.0/15",
-                "inet6_range": "fc00::/18"
+                "inet4_range": "198.18.0.0/15"
             }
         ],
         "rules": [
@@ -24,18 +23,18 @@
                 "query_type": [
                     "HTTPS",
                     "SVCB",
-                    "PTR"
+                    "PTR",
+                    "AAAA"
                 ],
                 "action": "reject"
             },
             {
                 "query_type": [
                     "A",
-                    "AAAA",
                     "CNAME"
                 ],
                 "server": "fakeip",
-                "strategy": "prefer_ipv4",
+                "strategy": "ipv4_only",
                 "rewrite_ttl": 1
             }
         ],
@@ -109,6 +108,14 @@
                     "198.18.0.0/15"
                 ],
                 "outbound": "ExitGateway"
+            },
+            {
+                "ip_version": 6,
+                "action": "reject"
+            },
+            {
+                "action": "resolve",
+                "strategy": "ipv4_only"
             },
             {
                 "ip_is_private": true,
