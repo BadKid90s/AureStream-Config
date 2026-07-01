@@ -15,7 +15,8 @@
             {
                 "tag": "fakeip",
                 "type": "fakeip",
-                "inet4_range": "198.18.0.0/15"
+                "inet4_range": "198.18.0.0/15",
+                "inet6_range": "fc00::/18"
             }
         ],
         "rules": [
@@ -30,9 +31,11 @@
             {
                 "query_type": [
                     "A",
-                    "AAAA"
+                    "AAAA",
+                    "CNAME"
                 ],
                 "server": "fakeip",
+                "strategy": "prefer_ipv4",
                 "rewrite_ttl": 1
             }
         ],
@@ -44,8 +47,16 @@
             "tag": "tun",
             "type": "tun",
             "address": [
-                "172.19.0.1/30"
+                "172.19.0.1/30",
+                "fdfe:dcba:9876::1/126"
             ],
+            "platform": {
+                "http_proxy": {
+                    "enabled": true,
+                    "server": "127.0.0.1",
+                    "server_port": 6789
+                }
+            },
             "mtu": 1500,
             "stack": "gvisor",
             "auto_route": true,
@@ -92,10 +103,6 @@
             {
                 "protocol": "dns",
                 "action": "hijack-dns"
-            },
-            {
-                "ip_version": 6,
-                "action": "reject"
             },
             {
                 "ip_cidr": [

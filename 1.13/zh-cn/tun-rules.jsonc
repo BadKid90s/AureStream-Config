@@ -40,9 +40,11 @@
       {
         "query_type": [
           "A",
-          "AAAA"
+          "AAAA",
+          "CNAME"
         ],
         "server": "fakeip",
+        "strategy": "prefer_ipv4",
         "rewrite_ttl": 1
       }
     ],
@@ -58,6 +60,13 @@
         "172.19.0.1/30",
         "fdfe:dcba:9876::1/126"
       ],
+      "platform": {
+        "http_proxy": {
+          "enabled": true,
+          "server": "127.0.0.1",
+          "server_port": 6789
+        }
+      },
       "auto_route": true,
       "strict_route": true,
       "route_exclude_address": [
