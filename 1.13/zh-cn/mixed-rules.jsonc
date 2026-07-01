@@ -31,11 +31,11 @@
           "geosite-microsoft-cn"
         ],
         "server": "system",
-        "strategy": "ipv4_only"
+        "strategy": "prefer_ipv4"
       }
     ],
     "final": "dns_proxy",
-    "strategy": "ipv4_only"
+    "strategy": "prefer_ipv4"
   },
   "inbounds": [
     {
@@ -47,10 +47,7 @@
   ],
   "route": {
     "rules": [
-      {
-        "ip_version": 6,
-        "action": "reject"
-      },
+      { "protocol": "quic", "action": "reject" },
       {
         "type": "logical",
         "mode": "or",
