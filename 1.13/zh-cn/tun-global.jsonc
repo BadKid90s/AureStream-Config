@@ -81,6 +81,15 @@
     "route": {
         "rules": [
             {
+                "inbound": "tun",
+                "action": "sniff"
+            },
+            {
+                "inbound": "tun",
+                "port": 53,
+                "action": "hijack-dns"
+            },
+            {
                 "protocol": "dns",
                 "action": "hijack-dns"
             },
