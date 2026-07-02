@@ -119,7 +119,10 @@
         "action": "hijack-dns"
       },
       {
-        "ip_cidr": "198.18.0.0/15",
+        "ip_cidr": [
+          "198.18.0.0/15",
+          "fc00::/18"
+        ],
         "outbound": "ExitGateway"
       },
       {
