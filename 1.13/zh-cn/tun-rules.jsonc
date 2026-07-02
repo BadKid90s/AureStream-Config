@@ -21,8 +21,7 @@
       {
         "type": "fakeip",
         "tag": "fakeip",
-        "inet4_range": "198.18.0.0/15",
-        "inet6_range": "fc00::/18"
+        "inet4_range": "198.18.0.0/15"
       }
     ],
     "rules": [
@@ -37,7 +36,7 @@
       {
         "rule_set": "geosite-cn",
         "server": "system",
-        "strategy": "prefer_ipv4"
+        "strategy": "ipv4_only"
       },
       {
         "query_type": [
@@ -46,12 +45,12 @@
           "CNAME"
         ],
         "server": "fakeip",
-        "strategy": "prefer_ipv4",
+        "strategy": "ipv4_only",
         "rewrite_ttl": 1
       }
     ],
     "final": "dns_proxy",
-    "strategy": "prefer_ipv4"
+    "strategy": "ipv4_only"
   },
   "inbounds": [
     {
@@ -59,8 +58,7 @@
       "tag": "tun",
       "mtu": 1500,
       "address": [
-        "172.19.0.1/30",
-        "fdfe:dcba:9876::1/126"
+        "172.19.0.1/30"
       ],
       "platform": {
         "http_proxy": {
