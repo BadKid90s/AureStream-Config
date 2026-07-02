@@ -6,15 +6,17 @@
   "dns": {
     "servers": [
       {
-        "type": "tcp",
+        "type": "udp",
         "tag": "system",
-        "server": "223.5.5.5"
+        "server": "223.5.5.5",
+        "server_port": 53
       },
       {
-        "type": "tls",
+        "type": "tcp",
         "tag": "dns_proxy",
         "detour": "ExitGateway",
-        "server": "8.8.8.8"
+        "server": "1.0.0.1",
+        "server_port": 53
       },
       {
         "type": "fakeip",
