@@ -123,6 +123,10 @@
         "action": "reject"
       },
       {
+        "ip_version": 6,
+        "action": "reject"
+      },
+      {
         "ip_cidr": [
           "198.18.0.0/15",
           "fc00::/18"
