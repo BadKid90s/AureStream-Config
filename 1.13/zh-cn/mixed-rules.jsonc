@@ -120,5 +120,28 @@
       "enabled": true,
       "path": "cache.db"
     }
-  }
+  },
+  "outbounds": [
+    {
+      "tag": "direct",
+      "type": "direct",
+      "domain_resolver": "system"
+    },
+    {
+      "tag": "ExitGateway",
+      "type": "selector",
+      "outbounds": [
+        "auto"
+      ],
+      "interrupt_exist_connections": true
+    },
+    {
+      "tag": "auto",
+      "type": "urltest",
+      "url": "https://www.gstatic.com/generate_204",
+      "interval": "1m",
+      "tolerance": 50,
+      "outbounds": []
+    }
+  ]
 }
